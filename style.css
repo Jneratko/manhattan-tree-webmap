@@ -5,12 +5,40 @@ body {
 }
 
 header {
-    background: #061636;
-    padding: 15px;
-    color: white;
-    text-align: center;
-    font-size: 38px;
-    z-index: 1000;
+  position: sticky;
+  top: 0;
+  z-index: 30;
+  background: #00001e;
+  padding: 10px 0; /* slightly smaller padding for mobile */
+  color: white;
+  box-shadow: 0 2px 4px rgba(0,0,0,0.3);
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  flex-wrap: wrap; /* allow stacking on small screens */
+}
+
+header img {
+  height: 50px; /* smaller logo for mobile */
+}
+
+header h2 {
+  font-size: 16px; /* smaller text for mobile */
+  margin-left: 10px;
+}
+
+/* For larger screens */
+@media screen and (min-width: 640px) {
+  header {
+    padding: 15px 0;
+  }
+  header img {
+    height: 96px; /* original size h-24 */
+  }
+  header h2 {
+    font-size: 24px; /* original size */
+    margin-left: 20px;
+  }
 }
 
 #map {
