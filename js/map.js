@@ -2,6 +2,26 @@ var map = L.map('map').setView([40.77, -73.98], 13);
 var geojson;
 var legend = L.control({position: 'bottomright'});
 var info = L.control();
+var markers = L.markerClusterGroup({
+  maxClusterRadius: 120,
+  disableClusteringAtZoom: 18,
+  showCoverageOnHover: true,
+  spiderfyOnMaxZoom: false,
+  zoomToBoundsOnClick: true,
+
+  iconCreateFunction: function (cluster) {
+  return L.divIcon({
+    html: `
+      <div class="cluster-content">
+        <div class="cluster-count">${cluster.getChildCount()}</div>
+      </div>
+    `,
+    className: 'tree-cluster',
+    iconSize: [50, 50]
+  });
+}
+});
+
 
 L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png', {
   maxZoom: 19,
@@ -18,7 +38,7 @@ function getColor(health){
 
 function style(feature) {
     return {
-      radius: 5,
+      radius: 7,
       fillColor: getColor(feature.properties.health),
       color: "#000",
       weight: .5,
@@ -67,15 +87,18 @@ function onEachFeature(feature, layer) {
 fetch('data/NYC_TreeCensus_2015.geojson')
   .then(response => response.json())
   .then(data => {
+
     geojson = L.geoJSON(data, {
-      pointToLayer: function(feature, latlng) {
+      pointToLayer: function (feature, latlng) {
         return L.circleMarker(latlng, style(feature));
       },
       onEachFeature: onEachFeature
-    }).addTo(map);
+    });
+
+    markers.addLayer(geojson);
+    map.addLayer(markers);
+
   });
-
-
 
 legend.onAdd = function (map) {
     var div = L.DomUtil.create('div', 'info legend'),
@@ -124,7 +147,7 @@ info.update = function(props) {
                 <li><strong>Status:</strong> ${props.status}</li>
                 <li><strong>Problems:</strong> ${props.problems || 'None'}</li>
             </ul>
-        ` : 'Hover over a tree'}
+        ` : 'Click a Tree Cluster to Begin'}
     `;
 };
 
